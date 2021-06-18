@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxJarSdk", "TaxJarSdk\TaxJarSdk.csproj", "{6D641575-1C1C-4C09-B9CF-E2ED3DD249F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxJarSdk.Implementation", "TaxJarSdk\TaxJarSdk.Implementation.csproj", "{6D641575-1C1C-4C09-B9CF-E2ED3DD249F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxServiceRunner", "TaxServiceRunner\TaxServiceRunner.csproj", "{C3DCB094-F644-4285-BA7D-F17FFA8D7195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxJarSdk.Core", "TaxJarSdk.Core\TaxJarSdk.Core.csproj", "{25F83521-9809-485B-9B74-6331AEAE8B8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{6D641575-1C1C-4C09-B9CF-E2ED3DD249F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D641575-1C1C-4C09-B9CF-E2ED3DD249F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D641575-1C1C-4C09-B9CF-E2ED3DD249F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3DCB094-F644-4285-BA7D-F17FFA8D7195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3DCB094-F644-4285-BA7D-F17FFA8D7195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3DCB094-F644-4285-BA7D-F17FFA8D7195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3DCB094-F644-4285-BA7D-F17FFA8D7195}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25F83521-9809-485B-9B74-6331AEAE8B8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25F83521-9809-485B-9B74-6331AEAE8B8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25F83521-9809-485B-9B74-6331AEAE8B8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25F83521-9809-485B-9B74-6331AEAE8B8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
