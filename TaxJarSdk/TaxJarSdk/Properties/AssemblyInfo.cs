@@ -1,4 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("TaxJarSdk.Tests")]
-[assembly: InternalsVisibleTo("TaxServiceRunner")]
+[assembly: InternalsVisibleTo("TaxJarSdk.TaxService.ConsoleAppRunner")]

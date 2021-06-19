@@ -105,4 +105,13 @@
 
 
     }
+
+    /// <summary>
+    /// Represents a base response.
+    /// </summary>
+    internal class BaseResponse : IResponse
+    {
+        /// <inheritdoc />
+        public IServiceError ServiceError { get; set; }
+    }
 }

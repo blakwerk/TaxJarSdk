@@ -1,12 +1,16 @@
-﻿using System;
-
-namespace TaxJarSdk.TaxService.ConsoleAppRunner
+﻿namespace TaxJarSdk.TaxService.ConsoleAppRunner
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Hosting;
+
     class Program
     {
-        static void Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var host = Startup.CreateHostBuilder();
+            await host.RunConsoleAsync();
+            return Environment.ExitCode;
         }
     }
 }

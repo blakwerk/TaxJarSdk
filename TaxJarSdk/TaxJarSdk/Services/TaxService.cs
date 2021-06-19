@@ -16,7 +16,9 @@
     internal class ServiceError : IServiceError
     {
         public string Code { get; set; }
+
         public string Message { get; set; }
+        
         public Exception Exception { get; set; }
     }
 }
