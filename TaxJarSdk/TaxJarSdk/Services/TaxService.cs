@@ -7,6 +7,7 @@
     using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
     using TaxJarSdk.Models.Requests;
+    using TaxJarSdk.Models.Responses;
 
     internal class TaxService : ITaxService
     {
@@ -27,14 +28,29 @@
         /// <inheritdoc />
         public async Task<double> GetTaxRateForLocationAsync(ILocation location)
         {
-            var taxRateRequest = location.ToTaxRateRequest();
-
-            this._logger.LogInformation($"Looking up tax rates for zip: {taxRateRequest.ZipCode}");
+            this._logger.LogInformation($"Looking up tax rates based on location zip: {location.ZipCode}");
 
             var response = await this._taxClient
-                .GetTaxRateAsync(taxRateRequest)
+                .GetTaxRateAsync(location.ToTaxRateRequest())
                 .ConfigureAwait(false);
 
+            return this.HandleResponse(response);
+        }
+
+        /// <inheritdoc />
+        public async Task<double> GetTaxRateForLocationAsync(string zipCode)
+        {
+            this._logger.LogInformation($"Looking up tax rates for zip: {zipCode}");
+
+            var response = await this._taxClient
+                .GetTaxRateAsync(zipCode)
+                .ConfigureAwait(false);
+
+            return this.HandleResponse(response);
+        }
+
+        private double HandleResponse(TaxRateResponse response)
+        {
             if (response.Error == null)
             {
                 return response.Rate.CombinedDistrictRate;

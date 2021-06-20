@@ -1,7 +1,6 @@
 ﻿namespace TaxJarSdk.Implementation.Clients
 {
     using System;
-    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -10,7 +9,6 @@
     using TaxJarSdk.Implementation.Extensions;
     using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
-    using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
     internal class BaseClient
@@ -38,10 +36,10 @@
 
         protected async Task<TResponse> GetAsync<TResponse>(string path) where TResponse : IResponse, new()
         {
-            var request = new RestRequest(path, DataFormat.Json);
-            
             try
             {
+                var request = new RestRequest(path, DataFormat.Json);
+
                 var apiResponse = await this.Client
                     .ExecuteGetAsync<TResponse>(request)
                     .ConfigureAwait(false);
@@ -71,12 +69,12 @@
         protected async Task<TResponse> PostAsync<TRequest, TResponse>(string path, TRequest request)
             where TResponse : IResponse, new()
         {
-            var jsonBody = JsonConvert.SerializeObject(request);
-            var restRequest = new RestRequest(path, Method.POST).AddJsonBody(jsonBody);
-            restRequest.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
-
             try
             {
+                var jsonBody = JsonConvert.SerializeObject(request);
+                var restRequest = new RestRequest(path, Method.POST).AddJsonBody(jsonBody);
+                restRequest.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
+
                 var apiResponse = await this.Client
                     .ExecuteAsync(restRequest)
                     .ConfigureAwait(false);
@@ -86,7 +84,7 @@
                     return JsonConvert.DeserializeObject<TResponse>(apiResponse.Content);
                 }
 
-                this.Logger.LogWarning($"Request to \"{path}\" not OK. Status returned was {apiResponse.StatusCode}");
+                this.Logger.LogWarning($"Request to \"{path}\" not successful. Status returned was {apiResponse.StatusCode}");
                 return apiResponse.StatusCode.ToErrorResponse<TResponse>();
             }
             catch (Exception ex)

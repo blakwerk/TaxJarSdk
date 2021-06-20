@@ -9,7 +9,7 @@
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
-    internal class TaxClient : BaseClient, ITaxClient
+    internal sealed class TaxClient : BaseClient, ITaxClient
     {
         public TaxClient(
             ILogger<TaxClient> logger,

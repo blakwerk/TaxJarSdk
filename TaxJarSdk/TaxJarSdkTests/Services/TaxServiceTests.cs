@@ -1,12 +1,15 @@
 namespace TaxJarSdk.Tests.Services
 {
     using System;
+    using System.Net;
     using Microsoft.Extensions.Logging.Abstractions;
     using Moq;
     using TaxJarSdk.Core.Services;
     using TaxJarSdk.Implementation.Services;
+    using TaxJarSdk.Models.Extensions;
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
+    using TaxJarSdk.Tests.Fakes;
     using Xunit;
 
     public class TaxServiceTests
@@ -57,12 +60,17 @@ namespace TaxJarSdk.Tests.Services
         }
 
         [Fact]
-        public void GetTaxRateForLocationAsync_WhenInvalidRequest_ReturnsNaN()
+        public void GetTaxRateForLocationAsync_WhenInvalidPostRequest_ReturnsNaN()
         {
             // Arrange
             var stubLogger = new NullLogger<TaxService>();
             var taxClientMock = new Mock<ITaxClient>();
             var taxCalculatorMock = new Mock<ITaxCalculator>();
+
+            var errorResponse = HttpStatusCode.NotFound.ToErrorResponse<TaxRateResponse>();
+
+            taxClientMock.Setup(c => c.GetTaxRateAsync(It.IsAny<TaxRateRequest>()))
+                .ReturnsAsync(errorResponse);
 
             var dut = new TaxService(
                 stubLogger,
@@ -75,47 +83,30 @@ namespace TaxJarSdk.Tests.Services
             // Assert
             Assert.Equal(double.NaN, rate);
         }
-    }
 
-    public class DummyData
-    {
-        public static TaxRateRequest SantaMonicaRateRequest { get; } = new()
+        [Fact]
+        public void GetTaxRateForLocationAsync_WhenInvalidGetRequest_ReturnsNaN()
         {
-            City = "Santa Monica",
-            State = "CA",
-            ZipCode = "90404",
-        };
+            // Arrange
+            var stubLogger = new NullLogger<TaxService>();
+            var taxClientMock = new Mock<ITaxClient>();
+            var taxCalculatorMock = new Mock<ITaxCalculator>();
 
-        public static TaxRateResponse SantaMonicaTaxRateResponse { get; } = new()
-        {
-            Zip = "90404",
-            State = "CA",
-            StateRate = 0.0625,
-            County = "LOS ANGELES",
-            CountyRate = 0.01,
-            City = "SANTA MONICA",
-            CityRate = 0.0,
-            CombinedDistrictRate = 0.025,
-            CombinedRate = 0.975,
-            IsFreightTaxable = false,
-        };
+            var errorResponse = HttpStatusCode.NotFound.ToErrorResponse<TaxRateResponse>();
 
-        //TaxRateResponse
-        public static string SantaMonicaRateResponseJson { get; } 
-            = @"{
-  ""rate"": {
-    ""zip"": ""90404"",
-    ""state"": ""CA"",
-    ""state_rate"": ""0.0625"",
-    ""county"": ""LOS ANGELES"",
-    ""county_rate"": ""0.01"",
-    ""city"": ""SANTA MONICA"",
-    ""city_rate"": ""0.0"",
-    ""combined_district_rate"": ""0.025"",
-    ""combined_rate"": ""0.0975"",
-    ""freight_taxable"": false
-  }
-}";
+            taxClientMock.Setup(c => c.GetTaxRateAsync(It.IsAny<string>()))
+                .ReturnsAsync(errorResponse);
 
+            var dut = new TaxService(
+                stubLogger,
+                taxClientMock.Object,
+                taxCalculatorMock.Object);
+
+            // Act
+            var rate = dut.GetTaxRateForLocationAsync("some zip code").Result;
+
+            // Assert
+            Assert.Equal(double.NaN, rate);
+        }
     }
 }
