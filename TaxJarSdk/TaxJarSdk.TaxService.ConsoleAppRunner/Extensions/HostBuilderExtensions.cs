@@ -23,7 +23,8 @@
                 services.AddHostedService<Worker>();
 
                 services.AddTransient<ITaxService, TaxService>();
-                services.AddTransient<ITaxClient, TaxClient>();
+                services.AddTransient<ITaxCalculator, TaxCalculator>();
+                services.AddTransient<ITaxClient, TaxJarClient>();
                 services.AddTransient<IRestClient, RestClient>();
                 services.AddTransient<TaxRateRunner>();
             });

@@ -10,10 +10,10 @@
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
-    internal sealed class TaxClient : BaseClient, ITaxClient
+    internal sealed class TaxJarClient : BaseClient, ITaxClient
     {
-        public TaxClient(
-            ILogger<TaxClient> logger,
+        public TaxJarClient(
+            ILogger<TaxJarClient> logger,
             IRestClient client,
             IConfiguration config) : base(logger, client, config)
         {
