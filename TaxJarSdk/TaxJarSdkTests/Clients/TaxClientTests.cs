@@ -25,31 +25,31 @@
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
-                new TaxClient(logger: null, restClientMock.Object, fakeConfig));
+                new TaxJarClient(logger: null, restClientMock.Object, fakeConfig));
         }
 
         [Fact]
         public void TaxClient_ThrowArgumentNullException_WhenRestClientIsNull()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
-                new TaxClient(stubLogger, client: null, fakeConfig));
+                new TaxJarClient(stubLogger, client: null, fakeConfig));
         }
 
         [Fact]
         public void TaxClient_ThrowArgumentNullException_WhenConfigurationIsNull()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = new Mock<IRestClient>();
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
-                new TaxClient(stubLogger, restClientMock.Object, config: null));
+                new TaxJarClient(stubLogger, restClientMock.Object, config: null));
         }
     }
 
@@ -103,7 +103,7 @@
         public void GetAsync_UnsuccessfulRequest_ReturnsResponseWithError()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = FakeRestClient.GetDefaultRestClientMock();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
 
@@ -134,7 +134,7 @@
         public void GetAsync_ClientException_ReturnsResponseWithError()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = FakeRestClient.GetDefaultRestClientMock();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
 
@@ -156,7 +156,7 @@
         public void GetAsync_SuccessfulRequest_ReturnsResponse()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = FakeRestClient.GetDefaultRestClientMock();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
 
@@ -187,7 +187,7 @@
         public void PostAsync_SuccessfulRequest_ReturnsResponse()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = FakeRestClient.GetDefaultRestClientMock();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
 
@@ -225,7 +225,7 @@
         public void PostAsync_InvalidRequest_ReturnsErrorResponse()
         {
             // Arrange
-            var stubLogger = new NullLogger<TaxClient>();
+            var stubLogger = new NullLogger<TaxJarClient>();
             var restClientMock = FakeRestClient.GetDefaultRestClientMock();
             var fakeConfig = FakeConfigurationProvider.BuildDefaultConfiguration();
             
