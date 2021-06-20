@@ -6,6 +6,7 @@ namespace TaxJarSdk.Tests.Services
     using Moq;
     using TaxJarSdk.Core.Clients;
     using TaxJarSdk.Implementation.Services;
+    using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
@@ -83,6 +84,63 @@ namespace TaxJarSdk.Tests.Services
 
             // Assert
             Assert.Equal(double.NaN, rate);
+        }
+
+        [Fact]
+        public void CalculateTaxesAsync_WhenInvalidRequest_ReturnsNan()
+        {
+            // Arrange
+            var stubLogger = new NullLogger<TaxService>();
+            var taxClientMock = new Mock<ITaxClient>();
+
+            var errorResponse = HttpStatusCode.NotFound.ToErrorResponse<TaxCalculationResponse>();
+
+            taxClientMock
+                .Setup(c => c.CalculateSalesTaxAsync(
+                    It.IsAny<TaxCalculationRequest>()))
+                .ReturnsAsync(errorResponse);
+
+            var dut = new TaxService(
+                stubLogger,
+                taxClientMock.Object);
+
+            // Act
+            var taxes = dut.CalculateTaxesAsync(new Order()).Result;
+
+            // Assert
+            Assert.Equal(double.NaN, taxes);
+        }
+
+        [Fact]
+        public void CalculateTaxesAsync_WhenValidRequest_ReturnsExpectedTax()
+        {
+            // Arrange
+            var stubLogger = new NullLogger<TaxService>();
+            var taxClientMock = new Mock<ITaxClient>();
+
+            var expectedTaxes = 1.50;
+            var apiResponse = new TaxCalculationResponse
+            {
+                Taxes = new TaxResponse
+                {
+                    TaxAmountToCollect = expectedTaxes,
+                }
+            };
+
+            taxClientMock
+                .Setup(c => c.CalculateSalesTaxAsync(
+                    It.IsAny<TaxCalculationRequest>()))
+                .ReturnsAsync(apiResponse);
+
+            var dut = new TaxService(
+                stubLogger,
+                taxClientMock.Object);
+
+            // Act
+            var actualTaxes = dut.CalculateTaxesAsync(new Order()).Result;
+
+            // Assert
+            Assert.Equal(expectedTaxes, actualTaxes);
         }
     }
 }

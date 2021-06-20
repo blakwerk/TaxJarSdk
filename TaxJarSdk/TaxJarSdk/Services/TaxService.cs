@@ -7,7 +7,6 @@
     using TaxJarSdk.Core.Services;
     using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
-    using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
     internal class TaxService : ITaxService
