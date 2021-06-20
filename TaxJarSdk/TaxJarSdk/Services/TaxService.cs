@@ -3,60 +3,64 @@
     using System;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
+    using TaxJarSdk.Core.Clients;
     using TaxJarSdk.Core.Services;
     using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
-    using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
     internal class TaxService : ITaxService
     {
         private readonly ILogger<TaxService> _logger;
         private readonly ITaxClient _taxClient;
-        private readonly ITaxCalculator _taxCalculator;
 
         public TaxService(
             ILogger<TaxService> logger, 
-            ITaxClient taxClient, 
-            ITaxCalculator taxCalculator)
+            ITaxClient taxClient)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._taxClient = taxClient ?? throw new ArgumentNullException(nameof(taxClient));
-            this._taxCalculator = taxCalculator ?? throw new ArgumentNullException(nameof(taxCalculator));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _taxClient = taxClient ?? throw new ArgumentNullException(nameof(taxClient));
         }
 
         /// <inheritdoc />
         public async Task<double> GetTaxRateForLocationAsync(ILocation location)
         {
-            this._logger.LogInformation($"Looking up tax rates based on location zip: {location.ZipCode}");
+            _logger.LogInformation($"Looking up tax rates based on location zip: {location.ZipCode}");
 
-            var response = await this._taxClient
+            var response = await _taxClient
                 .GetTaxRateAsync(location.ToTaxRateRequest())
                 .ConfigureAwait(false);
 
-            return this.HandleResponse(response);
+            return this.HandleRaxRateResponse(response);
         }
 
         /// <inheritdoc />
         public async Task<double> GetTaxRateForLocationAsync(string zipCode)
         {
-            this._logger.LogInformation($"Looking up tax rates for zip: {zipCode}");
+            _logger.LogInformation($"Looking up tax rates for zip: {zipCode}");
 
-            var response = await this._taxClient
+            var response = await _taxClient
                 .GetTaxRateAsync(zipCode)
                 .ConfigureAwait(false);
 
-            return this.HandleResponse(response);
+            return this.HandleRaxRateResponse(response);
         }
 
-        private double HandleResponse(TaxRateResponse response)
+        /// <inheritdoc />
+        public async Task<double> CalculateTaxesAsync(IOrder order)
         {
+            _logger.LogInformation($"Calculating taxes for order {order.Id}");
+
+            var response = await _taxClient
+                .CalculateSalesTaxAsync(order.ToCalculationRequest())
+                .ConfigureAwait(false);
+
             if (response.Error == null)
             {
-                return response.Rate.CombinedDistrictRate;
+                return response.Taxes.TaxAmountToCollect;
             }
 
-            this._logger.LogWarning(
+            _logger.LogWarning(
                 response.Error.Exception,
                 "An error occurred fetching the response! ErrorCode: " +
                 $"{response.Error.Code}. Error message: {response.Error.Message}");
@@ -64,11 +68,19 @@
             return double.NaN;
         }
 
-        /// <inheritdoc />
-        public async Task<double> CalculateTaxesAsync(IOrder order)
+        private double HandleRaxRateResponse(TaxRateResponse response)
         {
-            throw new NotImplementedException();
-        }
+            if (response.Error == null)
+            {
+                return response.Rate.CombinedDistrictRate;
+            }
 
+            _logger.LogWarning(
+                response.Error.Exception,
+                "An error occurred fetching the response! ErrorCode: " +
+                $"{response.Error.Code}. Error message: {response.Error.Message}");
+
+            return double.NaN;
+        }
     }
 }

@@ -15,8 +15,4 @@
     <ProjectReference Include="..\TaxJarSdk.Models\TaxJarSdk.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Clients\" />
-  </ItemGroup>
-
 </Project>

@@ -3,6 +3,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using RestSharp;
+    using TaxJarSdk.Core.Clients;
     using TaxJarSdk.Core.Services;
     using TaxJarSdk.Implementation.Clients;
     using TaxJarSdk.Implementation.Services;
@@ -22,7 +23,6 @@
                 services.AddHostedService<Worker>();
 
                 services.AddTransient<ITaxService, TaxService>();
-                services.AddTransient<ITaxCalculator, TaxCalculator>();
                 services.AddTransient<ITaxClient, TaxClient>();
                 services.AddTransient<IRestClient, RestClient>();
                 services.AddTransient<TaxRateRunner>();
