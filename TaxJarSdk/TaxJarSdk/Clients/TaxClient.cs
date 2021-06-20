@@ -5,7 +5,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using RestSharp;
-    using TaxJarSdk.Core.Services;
+    using TaxJarSdk.Core.Clients;
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
@@ -31,6 +31,12 @@
         public Task<TaxRateResponse> GetTaxRateAsync(TaxRateRequest request)
         {
             return this.PostAsync<TaxRateRequest, TaxRateResponse>("rates/", request);
+        }
+
+        /// <inheritdoc />
+        public Task<TaxCalculationResponse> CalculateSalesTaxAsync(TaxCalculationRequest request)
+        {
+            return this.PostAsync<TaxCalculationRequest, TaxCalculationResponse>("taxes/", request);
         }
     }
 }

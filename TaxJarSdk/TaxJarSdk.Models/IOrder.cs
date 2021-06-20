@@ -1,30 +1,56 @@
 ﻿namespace TaxJarSdk.Models
 {
+    using System.Collections.Generic;
+    using TaxJarSdk.Models.Requests;
+
+    /// <summary>
+    /// Specifies an order.
+    /// </summary>
     public interface IOrder
     {
         /// <summary>
-        /// Gets or sets the unique id for this order.
+        /// Gets the unique id for this order.
         /// </summary>
-        public string Id { get; set; }
+        string Id { get; }
 
         /// <summary>
-        /// Gets or set the country code for the order. This property is required.
+        /// Gets the from-location, the order's origination point.
         /// </summary>
-        public string CountryCode { get; set; }
+        ILocation FromLocation { get; }
 
         /// <summary>
-        /// Gets or sets the shipping cost for the order. This property is required.
+        /// Gets the to-location, the order's destination point.
         /// </summary>
-        public double ShippingCost { get; set; }
+        ILocation ToLocation { get; }
 
         /// <summary>
-        /// Gets or sets the amount. TODO required for now.
+        /// Total amount of the order, excluding shipping.
         /// </summary>
-        public double Amount { get; set; }
+        double Amount { get; }
 
         /// <summary>
-        /// A flag indicating whether or not the order is ready for tax calculation.
+        /// Total amount of shipping for the order.
         /// </summary>
-        public bool IsOrderReadyForCalculation { get; }
+        double Shipping { get; }
+
+        /// <summary>
+        /// Unique identifier of the given customer for exemptions.
+        /// </summary>
+        string CustomerId { get; }
+
+        /// <summary>
+        /// Type of exemption for the order: wholesale, government, marketplace, other, or non_exempt.
+        /// </summary>
+        Exemption Exemption { get; }
+
+        /// <summary>
+        /// Gets the collection of known addresses (addresses on file). 
+        /// </summary>
+        IEnumerable<IKnownLocation> KnownLocations { get; }
+
+        /// <summary>
+        /// Gets the line items. 
+        /// </summary>
+        IEnumerable<LineItem> LineItems { get; }
     }
 }

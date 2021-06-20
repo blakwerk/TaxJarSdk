@@ -1,4 +1,4 @@
-﻿namespace TaxJarSdk.Core.Services
+﻿namespace TaxJarSdk.Core.Clients
 {
     using System.Threading.Tasks;
     using TaxJarSdk.Models.Requests;
@@ -18,5 +18,10 @@
         /// Gets the tax rate.
         /// </summary>
         Task<TaxRateResponse> GetTaxRateAsync(string zipCode);
+
+        /// <summary>
+        /// Gets the sales tax to be collected.
+        /// </summary>
+        Task<TaxCalculationResponse> CalculateSalesTaxAsync(TaxCalculationRequest request);
     }
 }

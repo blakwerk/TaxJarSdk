@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
 
-    public class TaxRateRequest : ILocation //: BaseRequest
+    public class TaxRateRequest : ILocation
     {
         /// <summary>
         /// Gets or sets the zip code. This is a required property.
@@ -49,37 +49,5 @@
         /// </remarks>
         [JsonProperty("street")]
         public string Street { get; set; }
-
-        ///// <inheritdoc />
-        //public override bool AreRequirementsMet()
-        //{
-        //    if (string.IsNullOrWhiteSpace(this.ZipCode))
-        //    {
-        //        return false;
-        //    }
-
-        //    if (this.ZipCode.Length != 5 || this.ZipCode.Length != 9)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (this.Country.Length != 2)
-        //    {
-        //        return false;
-        //    }
-        //}
-    }
-
-    // TODO map this to an interface?
-    public abstract class BaseRequest
-    {
-        /// <summary>
-        /// Some endpoints require certain pieces of data. This method
-        /// evaluates the data properties for the given request.
-        /// </summary>
-        /// <returns>
-        /// Returns a flag indicating if the requirements are met.
-        /// </returns>
-        public abstract bool AreRequirementsMet();
     }
 }

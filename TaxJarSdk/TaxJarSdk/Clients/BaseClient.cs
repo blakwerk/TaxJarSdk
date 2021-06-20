@@ -85,7 +85,8 @@
                 }
 
                 this.Logger.LogWarning($"Request to \"{path}\" not successful. Status returned was {apiResponse.StatusCode}");
-                return apiResponse.StatusCode.ToErrorResponse<TResponse>();
+                // You would think you would want "apiResponse.ErrorMessage" but apparently that doesn't map.
+                return apiResponse.StatusCode.ToErrorResponse<TResponse>(apiResponse.Content);
             }
             catch (Exception ex)
             {

@@ -16,13 +16,8 @@
         Task<double> GetTaxRateForLocationAsync(string zipCode);
 
         /// <summary>
-        /// Uses a <see cref="ITaxCalculator"/> to calculate the taxes for the <see cref="IOrder"/>
+        /// Gets the sales tax that should be collected for a given <see cref="IOrder"/>
         /// </summary>
         Task<double> CalculateTaxesAsync(IOrder order);
-    }
-
-    public interface ITaxCalculator
-    {
-
     }
 }
