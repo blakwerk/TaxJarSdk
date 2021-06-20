@@ -22,7 +22,7 @@
             if (config == null) throw new ArgumentNullException(nameof(config));
 
             // configure base url
-            base.Client.BaseUrl = new Uri("https://api.sandbox.taxjar.com/v2/");
+            base.Client.BaseUrl = new Uri(config.GetTaxJarApiBase());
 
             // Add default headers
             base.Client.AddDefaultHeader("Content-Type", "application/json");
