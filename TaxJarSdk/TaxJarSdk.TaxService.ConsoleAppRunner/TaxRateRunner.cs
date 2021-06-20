@@ -70,8 +70,8 @@
             ILogger<TaxRateRunner> logger,
             ITaxService taxService)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            if (taxService != null) this._taxService = taxService;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            if (taxService != null) _taxService = taxService;
         }
 
         /// <summary>
@@ -79,13 +79,13 @@
         /// </summary>
         public async Task RequestSantaMonicaTaxRatesAsync()
         {
-            this._logger.LogInformation("Requesting tax information for santa monica: ");
+            _logger.LogInformation("Requesting tax information for santa monica: ");
 
-            var rate = await this._taxService
-                .GetTaxRateForLocationAsync(this._santaMonica)
+            var rate = await _taxService
+                .GetTaxRateForLocationAsync(_santaMonica)
                 .ConfigureAwait(false);
 
-            this._logger.LogInformation($"Tax rate for Santa Monica: {rate}");
+            _logger.LogInformation($"Tax rate for Santa Monica: {rate}");
         }
 
         /// <summary>
@@ -93,14 +93,14 @@
         /// </summary>
         public async Task RequestTaxCalculationForSantaMonicaOrderAsync()
         {
-            this._logger.LogInformation("Requesting tax calculation " +
+            _logger.LogInformation("Requesting tax calculation " +
                                         "for order from santa monica to new york: ");
 
-            var rate = await this._taxService
-                .CalculateTaxesAsync(this._laJollaToLosAngelesOrder)
+            var rate = await _taxService
+                .CalculateTaxesAsync(_laJollaToLosAngelesOrder)
                 .ConfigureAwait(false);
 
-            this._logger.LogInformation($"Tax calculation for order: {rate}");
+            _logger.LogInformation($"Tax calculation for order: {rate}");
         }
     }
 }

@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using RestSharp;
     using TaxJarSdk.Core.Clients;
+    using TaxJarSdk.Implementation.Extensions;
     using TaxJarSdk.Models.Requests;
     using TaxJarSdk.Models.Responses;
 
@@ -19,6 +20,13 @@
             if (logger == null) throw new ArgumentNullException(nameof(logger));
             if (client == null) throw new ArgumentNullException(nameof(client));
             if (config == null) throw new ArgumentNullException(nameof(config));
+
+            // configure base url
+            base.Client.BaseUrl = new Uri("https://api.sandbox.taxjar.com/v2/");
+
+            // Add default headers
+            base.Client.AddDefaultHeader("Content-Type", "application/json");
+            base.Client.AddDefaultHeader("Authorization", $"Bearer {config.GetTaxJarApiKey()}");
         }
 
         /// <inheritdoc />

@@ -15,24 +15,24 @@
             ILogger<Worker> logger,
             TaxRateRunner taxRateRunner)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._taxRateRunner = taxRateRunner;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _taxRateRunner = taxRateRunner;
         }
 
         /// <inheritdoc />
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            this._logger.LogInformation("Worker starting up.");
+            _logger.LogInformation("Worker starting up.");
 
-            await this._taxRateRunner.RequestSantaMonicaTaxRatesAsync();
+            await _taxRateRunner.RequestSantaMonicaTaxRatesAsync();
 
-            await this._taxRateRunner.RequestTaxCalculationForSantaMonicaOrderAsync();
+            await _taxRateRunner.RequestTaxCalculationForSantaMonicaOrderAsync();
         }
 
         /// <inheritdoc />
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            this._logger.LogInformation("Worker shutting down.");
+            _logger.LogInformation("Worker shutting down.");
         }
     }
 }

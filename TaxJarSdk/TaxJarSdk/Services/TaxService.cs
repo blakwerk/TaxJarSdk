@@ -18,16 +18,16 @@
             ILogger<TaxService> logger, 
             ITaxClient taxClient)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._taxClient = taxClient ?? throw new ArgumentNullException(nameof(taxClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _taxClient = taxClient ?? throw new ArgumentNullException(nameof(taxClient));
         }
 
         /// <inheritdoc />
         public async Task<double> GetTaxRateForLocationAsync(ILocation location)
         {
-            this._logger.LogInformation($"Looking up tax rates based on location zip: {location.ZipCode}");
+            _logger.LogInformation($"Looking up tax rates based on location zip: {location.ZipCode}");
 
-            var response = await this._taxClient
+            var response = await _taxClient
                 .GetTaxRateAsync(location.ToTaxRateRequest())
                 .ConfigureAwait(false);
 
@@ -37,9 +37,9 @@
         /// <inheritdoc />
         public async Task<double> GetTaxRateForLocationAsync(string zipCode)
         {
-            this._logger.LogInformation($"Looking up tax rates for zip: {zipCode}");
+            _logger.LogInformation($"Looking up tax rates for zip: {zipCode}");
 
-            var response = await this._taxClient
+            var response = await _taxClient
                 .GetTaxRateAsync(zipCode)
                 .ConfigureAwait(false);
 
@@ -49,9 +49,9 @@
         /// <inheritdoc />
         public async Task<double> CalculateTaxesAsync(IOrder order)
         {
-            this._logger.LogInformation($"Calculating taxes for order {order.Id}");
+            _logger.LogInformation($"Calculating taxes for order {order.Id}");
 
-            var response = await this._taxClient
+            var response = await _taxClient
                 .CalculateSalesTaxAsync(order.ToCalculationRequest())
                 .ConfigureAwait(false);
 
@@ -60,7 +60,7 @@
                 return response.Taxes.TaxAmountToCollect;
             }
 
-            this._logger.LogWarning(
+            _logger.LogWarning(
                 response.Error.Exception,
                 "An error occurred fetching the response! ErrorCode: " +
                 $"{response.Error.Code}. Error message: {response.Error.Message}");
@@ -75,7 +75,7 @@
                 return response.Rate.CombinedDistrictRate;
             }
 
-            this._logger.LogWarning(
+            _logger.LogWarning(
                 response.Error.Exception,
                 "An error occurred fetching the response! ErrorCode: " +
                 $"{response.Error.Code}. Error message: {response.Error.Message}");

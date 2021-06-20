@@ -6,7 +6,6 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using RestSharp;
-    using TaxJarSdk.Implementation.Extensions;
     using TaxJarSdk.Models;
     using TaxJarSdk.Models.Extensions;
     using TaxJarSdk.Models.Responses;
@@ -24,14 +23,9 @@
             IConfiguration config)
         {
             this.Client = client ?? throw new ArgumentNullException(nameof(client));
-            this._config = config ?? throw new ArgumentNullException(nameof(config));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            
-            this.Client.BaseUrl = new Uri("https://api.sandbox.taxjar.com/v2/");
 
-            // Add default headers
-            this.Client.AddDefaultHeader("Content-Type", "application/json");
-            this.Client.AddDefaultHeader("Authorization", $"Bearer {config.GetTaxJarApiKey()}");
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         protected async Task<TResponse> GetAsync<TResponse>(string path) where TResponse : IResponse, new()
