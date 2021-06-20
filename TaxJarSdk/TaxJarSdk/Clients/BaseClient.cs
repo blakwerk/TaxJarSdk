@@ -1,17 +1,23 @@
 ﻿namespace TaxJarSdk.Implementation.Clients
 {
     using System;
+    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
     using RestSharp;
-    using TaxJarSdk.Core.Services;
-    using TaxJarSdk.Implementation.Services;
+    using TaxJarSdk.Implementation.Extensions;
+    using TaxJarSdk.Models;
+    using TaxJarSdk.Models.Extensions;
+    using TaxJarSdk.Models.Requests;
+    using TaxJarSdk.Models.Responses;
 
     internal class BaseClient
     {
-        protected readonly IRestClient Client;
         private readonly IConfiguration _config;
+
+        protected readonly IRestClient Client;
         protected readonly ILogger<BaseClient> Logger;
 
         protected BaseClient(
@@ -23,95 +29,78 @@
             this._config = config ?? throw new ArgumentNullException(nameof(config));
             this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             
-            this.Client.BaseUrl = new Uri("https://api.taxjar.com/v2/");
+            this.Client.BaseUrl = new Uri("https://api.sandbox.taxjar.com/v2/");
 
             // Add default headers
-            // TODO: get bearer token from config
             this.Client.AddDefaultHeader("Content-Type", "application/json");
-            this.Client.AddDefaultHeader("Authorization:", "Bearer 9e0cd62a22f451701f29c3bde214");
+            this.Client.AddDefaultHeader("Authorization", $"Bearer {config.GetTaxJarApiKey()}");
         }
 
-        protected Task<TResponse> GetAsync<TResponse>(string path) where TResponse : IResponse, new()
+        protected async Task<TResponse> GetAsync<TResponse>(string path) where TResponse : IResponse, new()
         {
             var request = new RestRequest(path, DataFormat.Json);
-
+            
             try
             {
-                //var foo = this.Client.Get<TResponse>(request);
-                //this.Client.GetA
-                //var response = this.Client.ExecuteGetAsync<TResponse>(request);
-                var response = this.Client.GetAsync<TResponse>(request);
+                var apiResponse = await this.Client
+                    .ExecuteGetAsync<TResponse>(request)
+                    .ConfigureAwait(false);
 
-                return response;
+                if (apiResponse.IsSuccessful)
+                {
+                    return apiResponse.Data;
+                }
+
+                this.Logger.LogWarning($"Request to \"{path}\" not OK. Status returned was {apiResponse.StatusCode}");
+                return apiResponse.StatusCode.ToErrorResponse<TResponse>();
             }
             catch (Exception ex)
             {
                 this.Logger.LogError(ex, $"Request to \"{path}\" failed");
-                var defaultResponse = default(TResponse);
-                
-                if(defaultResponse != null)
-                {
-                    defaultResponse.ServiceError = new ServiceError
-                    {
-                        Exception = ex,
-                        Message = ex.GetBaseException().Message,
-                        Code = "",
-                    };
-                }
 
-                return Task.FromResult(defaultResponse);
+                var error = Errors.InternalServerError($"Request to \"{path}\" threw exception {ex.Message}");
+                error.Exception = ex;
+
+                return new TResponse
+                {
+                    Error = error,
+                };
             }
         }
 
-        //private async Task<TResponse> SendRequestAsync<TResponse>(IRestRequest request)
-        //{
-        //    var response = default(IRestResponse<TResponse>);
-        //    var exception = default(Exception);
-
-        //    try
-        //    {
-        //        response = await this.Client.ExecuteAsync<TResponse>(request).ConfigureAwait(false);
-                
-
-        //        switch (response.StatusCode)
-        //        {
-        //            case HttpStatusCode.OK:
-        //                response = new TResponse();
-        //                break;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        exception = ex;
-
-        //        this.Logger.LogError(ex, $"Error getting response.");
-        //    }
-        //}
-
-        //private static bool IsJson(HttpResponseMessage message)
-        //{
-            
-        //}
-    }
-
-    internal class TaxCalculatorClient : BaseClient
-    {
-        internal TaxCalculatorClient(
-            ILogger<TaxCalculatorClient> logger,
-            IRestClient client,
-            IConfiguration config) : base(logger, client, config)
+        protected async Task<TResponse> PostAsync<TRequest, TResponse>(string path, TRequest request)
+            where TResponse : IResponse, new()
         {
+            var jsonBody = JsonConvert.SerializeObject(request);
+            var restRequest = new RestRequest(path, Method.POST).AddJsonBody(jsonBody);
+            restRequest.AddParameter("application/json", jsonBody, ParameterType.RequestBody);
+
+            try
+            {
+                var apiResponse = await this.Client
+                    .ExecuteAsync(restRequest)
+                    .ConfigureAwait(false);
+
+                if (apiResponse.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<TResponse>(apiResponse.Content);
+                }
+
+                this.Logger.LogWarning($"Request to \"{path}\" not OK. Status returned was {apiResponse.StatusCode}");
+                return apiResponse.StatusCode.ToErrorResponse<TResponse>();
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, $"Request to \"{path}\" failed");
+
+                var error = Errors.InternalServerError($"Request to \"{path}\" threw exception {ex.Message}");
+                error.Exception = ex;
+
+                return new TResponse
+                {
+                    Error = error,
+                };
+            }
         }
-
-
-    }
-
-    /// <summary>
-    /// Represents a base response.
-    /// </summary>
-    internal class BaseResponse : IResponse
-    {
-        /// <inheritdoc />
-        public IServiceError ServiceError { get; set; }
     }
 }
